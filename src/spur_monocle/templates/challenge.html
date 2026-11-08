@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checking your connection</title>
+<style>
+  body { font-family: system-ui, sans-serif; display: flex; min-height: 100vh; margin: 0;
+         align-items: center; justify-content: center; text-align: center; }
+  @media (prefers-color-scheme: dark) { body { background: #000; color: #fff; } a { color: #fff; } }
+</style>
+</head>
+<body>
+<main>
+  <p id="status">Checking your connection...</p>
+  <p><small>Protected by <a href="https://spur.us/monocle" rel="noreferrer">Spur Monocle</a>.
+  <a href="https://spur.us/terms/monocle" rel="noreferrer">Terms</a> and
+  <a href="https://spur.us/privacy" rel="noreferrer">Privacy</a>.</small></p>
+</main>
+<script src="https://mcl.spur.us/d/mcl.js?tk=${site_token_url}"></script>
+<script>
+(function () {
+  var verifyPath = "${verify_path}", deniedPath = "${denied_path}", sent = false;
+  function submit(assessment) {
+    if (sent) { return; }
+    sent = true;
+    fetch(verifyPath, { method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json" }, body: JSON.stringify({ captchaData: assessment }) })
+      .then(function (r) {
+        if (r.ok) { window.location.reload(); return; }
+        return r.json().then(function (d) {
+          var s = (d && d.service) || (d && d.vpn ? "your VPN" : (d && d.proxied ? "your proxy" : ""));
+          window.location.href = deniedPath + "?service=" + encodeURIComponent(s);
+        });
+      })
+      .catch(function () { sent = false; document.getElementById("status").textContent = "Something went wrong. Please refresh."; });
+  }
+  if (window.MCL) {
+    MCL.configure({ onAssessment: submit });
+    var existing = MCL.getAssessment && MCL.getAssessment();
+    if (existing) { submit(existing); }
+  } else {
+    document.getElementById("status").textContent = "Could not load the connection check. Please refresh.";
+  }
+})();
+</script>
+</body>
+</html>

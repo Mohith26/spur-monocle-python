@@ -1,0 +1,7 @@
+{
+  "name": "spur-monocle-python-interop",
+  "private": true,
+  "type": "module",
+  "description": "Cross-checks against jose (the JWE library @spur.us/monocle-backend uses) and Node crypto",
+  "dependencies": { "jose": "^5.9.6" }
+}

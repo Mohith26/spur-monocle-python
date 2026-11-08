@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "spur-monocle"
+version = "0.1.0"
+description = "Unofficial Python SDK for Spur Monocle: assessment decryption, policy API, and ASGI/Django gates"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [{ name = "Mohith Gajjela" }]
+dependencies = ["cryptography>=41", "httpx>=0.25"]
+
+[project.optional-dependencies]
+django = ["django>=4.2"]
+dev = ["pytest", "pytest-asyncio", "respx", "starlette", "fastapi", "django", "ruff", "mypy"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/spur_monocle"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
